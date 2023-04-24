@@ -5,6 +5,7 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.event.PlayerListener;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -32,18 +33,18 @@ public class CmdTPDeny extends CommandBase {
             return;
         }
 
-        EntityPlayerMP player = getCommandSenderAsPlayer(ics);
-        EntityPlayerMP other = getPlayer(ics,args[0]);
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
-        PlayerData o = WorldData.getPlayerList().get(other.getDisplayName());
+        EntityPlayer entityPlayer = getCommandSenderAsPlayer(ics);
+        EntityPlayer entityOther = getPlayer(ics,args[0]);
+        PlayerData playerData = PlayerData.get(entityPlayer);
+        PlayerData otherData = PlayerData.get(entityOther);
 
-        if(!p.getTpaRequests().contains(other.getDisplayName()) && !o.getTpaRequests().contains(player.getDisplayName())) {
-            ics.addChatMessage(new ChatComponentText("Found no request from " + other.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+        if(!playerData.containsTpaRequest(entityOther.getUniqueID()) && !otherData.containsTpaRequest(entityPlayer.getUniqueID())) {
+            ics.addChatMessage(new ChatComponentText("Found no request from " + entityOther.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             return;
         }
 
-        p.getTpaRequests().remove(other.getDisplayName());
-        o.getTpaRequests().remove(player.getDisplayName());
+        playerData.removeTpaRequest(entityOther.getUniqueID());
+        otherData.removeTpaRequest(entityPlayer.getUniqueID());
 
     }
 

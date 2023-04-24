@@ -6,20 +6,25 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class WorldData extends WorldSavedData {
 
     public final static String IDENTIFIER = "InfernoWorldData";
-    private static HashMap<String, PlayerData> playerList = new HashMap<>();
+    private static HashMap<UUID, NBTTagCompound> proxyPlayerData = new HashMap<>();
     private static Warp warps = new Warp();
 
     public WorldData(String identifier) {
         super(identifier);
     }
 
-    public static HashMap<String, PlayerData> getPlayerList() {
-        return playerList;
+    public static NBTTagCompound getProxyPlayerData(UUID playerUniqueId) {
+        return proxyPlayerData.get(playerUniqueId);
     }
+    public static void setProxyPlayerData(UUID playerUniqueId, NBTTagCompound tag) {
+        proxyPlayerData.put(playerUniqueId, tag);
+    }
+
     public Warp getWarps() { return warps; }
 
     public static WorldData getSave(World world) {

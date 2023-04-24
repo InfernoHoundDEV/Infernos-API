@@ -7,12 +7,16 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.util.InfernoTeleporter;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -30,23 +34,27 @@ public class CmdRandomTP extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayerMP player = getCommandSenderAsPlayer(ics);
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
         if (args.length == 0) {
-            args = new String[]{player.getDisplayName()};
+            args = new String[]{entityPlayer.getDisplayName()};
         }
         if (args.length <= 1) {
-            EntityPlayerMP other = getPlayer(ics, args[0]);
+            EntityPlayer entityOther = getPlayer(ics, args[0]);
 
-            if (!WorldData.getPlayerList().containsKey(other.getDisplayName())) {
+            if (entityOther == null) {
                 ics.addChatMessage(new ChatComponentText("Player is not online!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
 
-            PlayerData o = WorldData.getPlayerList().get(other.getDisplayName());
-            BlockDimPos pos = randomPos(other.dimension);
+            PlayerData otherData = PlayerData.get(entityOther);
+            BlockDimPos pos = getTopBlock(entityPlayer.worldObj, randomPos(entityOther.dimension));
 
-            o.setLastPos(o.getCurrentPos());
-            InfernoTeleporter.teleport(other,pos);
+            otherData.setLastPos(otherData.getCurrentPos());
+
+            InfernoTeleporter.teleport(entityOther, pos);
+            NBTTagCompound tag = new NBTTagCompound();
+            otherData.saveNBTData(tag);
+            WorldData.setProxyPlayerData(entityOther.getUniqueID(), tag);
         }
     }
 
@@ -68,8 +76,16 @@ public class CmdRandomTP extends CommandBase {
     private BlockDimPos randomPos(int dim) {
         Random random = new Random();
         int x = random.nextInt(Math.min(Math.max(InfernosCommands.rPosX, 100), 100000));
-        int y = random.nextInt(80) + 40;
+        int y = 258;
         int z = random.nextInt(Math.min(Math.max(InfernosCommands.rPosZ, 100), 100000));
         return new BlockDimPos( x, y, z, dim );
+    }
+
+    private BlockDimPos getTopBlock(World world, BlockDimPos pos) {
+        int y = 256;
+        while(world.isAirBlock((int) pos.getX(), y, (int) pos.getZ())) {
+            --y;
+        }
+        return new BlockDimPos(pos.getX(), y+1, (int) pos.getZ(), pos.getDim());
     }
 }

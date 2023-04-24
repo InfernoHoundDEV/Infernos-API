@@ -28,31 +28,31 @@ public class CmdHome extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
         if (args.length == 0) {
             args = new String[]{"home"};
         }
         if (args.length <= 1) {
-            BlockDimPos pos = p.getHomes().get(args[0].toLowerCase());
+            BlockDimPos pos = playerData.getHomes().get(args[0].toLowerCase());
             if (args[0].equalsIgnoreCase("list")) {
-                Set<String> list = p.getHomes().keySet();
+                Set<String> list = playerData.getHomes().keySet();
                 if (list == null || list.size() <= 0) {
-                    player.addChatMessage(new ChatComponentText("No Homes Exist").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                    entityPlayer.addChatMessage(new ChatComponentText("No Homes Exist").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 } else {
                     for (String str : list) {
-                        player.addChatMessage(new ChatComponentText(str).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD)));
+                        entityPlayer.addChatMessage(new ChatComponentText(str).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD)));
                     }
                 }
                 return;
             }
             if (pos == null) {
-                player.addChatMessage(new ChatComponentText("Home " + args[0].toLowerCase() + " not found.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                entityPlayer.addChatMessage(new ChatComponentText("Home " + args[0].toLowerCase() + " not found.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
-            p.setLastPos(p.getCurrentPos());
-            InfernoTeleporter.teleport(player, pos);
-            player.addChatMessage(new ChatComponentText("Teleported to " + args[0].toLowerCase()));
+            playerData.setLastPos(playerData.getCurrentPos());
+            InfernoTeleporter.teleport(entityPlayer, pos);
+            entityPlayer.addChatMessage(new ChatComponentText("Teleported to " + args[0].toLowerCase()));
         }
     }
 
@@ -68,8 +68,8 @@ public class CmdHome extends CommandBase {
 
     @Override
     public List addTabCompletionOptions(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData p = PlayerData.get(entityPlayer);
         return getListOfStringsMatchingLastWord(args,p.getHomes().keyArray());
     }
 }

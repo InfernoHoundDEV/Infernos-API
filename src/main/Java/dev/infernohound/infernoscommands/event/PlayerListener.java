@@ -9,7 +9,10 @@ import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,38 +25,33 @@ public class PlayerListener extends Event {
     @SubscribeEvent
     public void onPlayerCreation(EntityEvent.EntityConstructing event) {
         if (event.entity instanceof EntityPlayer && PlayerData.get((EntityPlayer) event.entity) == null) {
-            PlayerData.register((EntityPlayer) event.entity);
+            EntityPlayer player = (EntityPlayer) event.entity;
+            PlayerData.register(player);
         }
     }
 
 
     @SubscribeEvent
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        EntityPlayer player = (EntityPlayer) event.player;
-        String playerName = player.getDisplayName();
-        PlayerData p = PlayerData.get(player);
-        WorldData.getPlayerList().put(playerName, p);
-    }
-
-    @SubscribeEvent
-    public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        EntityPlayer player = (EntityPlayer) event.player;
-        String playerName = player.getDisplayName();
-        PlayerData p = PlayerData.get(player);
-        WorldData.getPlayerList().remove(playerName);
-    }
-
-    @SubscribeEvent
-    public void onPlayerDeath(PlayerDropsEvent event) {
-        EntityPlayer player = (EntityPlayer) event.entityPlayer;
-        String playerName = event.entityPlayer.getDisplayName();
-
-        if (WorldData.getPlayerList().containsKey(playerName)) {
-            PlayerData data = WorldData.getPlayerList().get(playerName);
-            BlockDimPos loc = new BlockDimPos(player.posX, player.posY, player.posZ, player.worldObj.provider.dimensionId);
-            data.setLastPos(loc);
-            logger.log(Level.INFO, "Set player's last loc to {}", loc);
+    public void onPlayerJoinWorld(EntityJoinWorldEvent event) {
+        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer) {
+            EntityPlayer entityPlayer = (EntityPlayer) event.entity;
+            NBTTagCompound playerDataNBT = WorldData.getProxyPlayerData(entityPlayer.getUniqueID());
+            if (playerDataNBT != null) {
+                PlayerData.get(entityPlayer).loadNBTData(playerDataNBT);
+            }
         }
     }
 
+
+    @SubscribeEvent
+    public void onLivingDeathEvent(LivingDeathEvent event) {
+        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer) {
+            EntityPlayer entityPlayer = (EntityPlayer) event.entity;
+            PlayerData playerData = PlayerData.get(entityPlayer);
+            playerData.setLastPos(playerData.getCurrentPos());
+            NBTTagCompound playerDataNBT = new NBTTagCompound();
+            playerData.saveNBTData(playerDataNBT);
+            WorldData.setProxyPlayerData(entityPlayer.getUniqueID(),playerDataNBT);
+        }
+    }
 }

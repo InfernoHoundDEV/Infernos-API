@@ -5,6 +5,7 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.event.PlayerListener;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.server.MinecraftServer;
@@ -33,39 +34,44 @@ public class CmdTPA extends CommandBase {
             return;
         }
 
-        EntityPlayerMP player = getCommandSenderAsPlayer(ics);
-        EntityPlayerMP other = getPlayer(ics, args[0]);
+        EntityPlayer entityPlayer = getCommandSenderAsPlayer(ics);
+        EntityPlayer entityOther = getPlayer(ics, args[0]);
 
-        if (!WorldData.getPlayerList().containsKey(other.getDisplayName())) {
+        if (entityOther == null) {
             ics.addChatMessage(new ChatComponentText("Player is not online!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             return;
         }
 
-        PlayerData o = WorldData.getPlayerList().get(other.getDisplayName());
+        PlayerData otherData = PlayerData.get(entityOther);
 
-        if (o.getTpaRequests().contains(player.getDisplayName())) {
-            ics.addChatMessage(new ChatComponentText("You have already sent a request to " + other.getDisplayName() + "!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+        if (otherData.containsTpaRequest(entityPlayer.getUniqueID())) {
+            ics.addChatMessage(new ChatComponentText("You have already sent a request to " + entityOther.getDisplayName() + "!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             return;
         }
 
 
-        o.getTpaRequests().add(player.getDisplayName());
+        otherData.addTpaRequest(entityPlayer.getUniqueID());
 
-        ChatComponentText request = new ChatComponentText(player.getDisplayName() + " requests to teleport to you");
+        ChatComponentText confirmation =  new ChatComponentText("Sent a request to " + entityOther.getDisplayName());
+        confirmation.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD));
+        entityPlayer.addChatComponentMessage(confirmation);
+
+
+        ChatComponentText request = new ChatComponentText(entityPlayer.getDisplayName() + " requests to teleport to you");
         request.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD));
-        other.addChatMessage(request);
+        entityOther.addChatComponentMessage(request);
 
         ChatComponentText accept = new ChatComponentText("Accept");
         accept.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN));
-        accept.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept " + player.getDisplayName()));
+        accept.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept " + entityPlayer.getDisplayName()));
 
         ChatComponentText tab = new ChatComponentText("   ");
 
         ChatComponentText deny = new ChatComponentText("Deny");
         deny.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
-        deny.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny " + player.getDisplayName()));
+        deny.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpdeny " + entityPlayer.getDisplayName()));
 
-        other.addChatMessage(accept.appendSibling(tab).appendSibling(deny));
+        entityOther.addChatComponentMessage(accept.appendSibling(tab).appendSibling(deny));
 
     }
 

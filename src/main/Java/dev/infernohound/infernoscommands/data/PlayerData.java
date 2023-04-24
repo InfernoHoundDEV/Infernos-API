@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.UUID;
 
 public class PlayerData implements IExtendedEntityProperties {
 
@@ -22,7 +23,7 @@ public class PlayerData implements IExtendedEntityProperties {
     private EntityPlayer player;
     private BlockDimPos lastPos;
     private Warp homes;
-    private Collection<String> tpaRequests;
+    private Collection<UUID> tpaRequests;
 
 
    public PlayerData(EntityPlayer player) {
@@ -34,6 +35,7 @@ public class PlayerData implements IExtendedEntityProperties {
 
     public static final void register(EntityPlayer player)
     {
+        PlayerData p = get(player);
         player.registerExtendedProperties(PlayerData.EXT_PROP_NAME, new PlayerData(player));
     }
 
@@ -58,8 +60,16 @@ public class PlayerData implements IExtendedEntityProperties {
         return homes;
     }
 
-    public Collection<String> getTpaRequests() {
-        return tpaRequests;
+    public boolean containsTpaRequest(UUID playerUniqueID) {
+        return tpaRequests.contains(playerUniqueID);
+    }
+
+    public void addTpaRequest(UUID playerUniqueID) {
+        tpaRequests.add(playerUniqueID);
+    }
+
+    public void removeTpaRequest(UUID playerUniqueID) {
+       tpaRequests.remove(playerUniqueID);
     }
 
     public BlockDimPos getCurrentPos() {
@@ -88,4 +98,8 @@ public class PlayerData implements IExtendedEntityProperties {
 
     @Override
     public void init(Entity entity, World world) {}
+
+    public void setPlayer(EntityPlayer player) {
+        this.player = player;
+    }
 }

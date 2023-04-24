@@ -7,6 +7,7 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -26,24 +27,27 @@ public class CmdSetHome extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
         if (args.length == 0) {
             args = new String[]{"home"};
         }
         if (args.length <= 1) {
             if (args[0].equalsIgnoreCase("list")) {
-                player.addChatMessage(new ChatComponentText("Can not have a home named list").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                entityPlayer.addChatMessage(new ChatComponentText("Can not have a home named list").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
             int maxHomes = InfernosCommands.maxHomes;
-            if(maxHomes <= 0 || (p.getHomes().size() >= maxHomes && !p.getHomes().keySet().contains(args[0].toLowerCase()))) {
-                player.addChatMessage(new ChatComponentText("Already have the maximum number of homes!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            if(maxHomes <= 0 || (playerData.getHomes().size() >= maxHomes && !playerData.getHomes().keySet().contains(args[0].toLowerCase()))) {
+                entityPlayer.addChatMessage(new ChatComponentText("Already have the maximum number of homes!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
 
-            p.getHomes().set(args[0].toLowerCase(), p.getCurrentPos());
-            player.addChatMessage(new ChatComponentText("Created home " + args[0].toLowerCase()));
+            playerData.getHomes().set(args[0].toLowerCase(), playerData.getCurrentPos());
+            entityPlayer.addChatMessage(new ChatComponentText("Created home " + args[0].toLowerCase()));
+            NBTTagCompound tag = new NBTTagCompound();
+            playerData.saveNBTData(tag);
+            WorldData.setProxyPlayerData(entityPlayer.getUniqueID(), tag);
         }
     }
 

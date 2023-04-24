@@ -28,11 +28,11 @@ public class CmdWarp extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
-        WorldData data = WorldData.getSave(player.worldObj);
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
+        WorldData data = WorldData.getSave(entityPlayer.worldObj);
         if (args.length == 0) {
-            player.addChatMessage(new ChatComponentText("Please give a name for the warp").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            entityPlayer.addChatMessage(new ChatComponentText("Please give a name for the warp").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             return;
         }
         if (args.length <= 1) {
@@ -40,21 +40,21 @@ public class CmdWarp extends CommandBase {
             if (args[0].equalsIgnoreCase("list")) {
                 Warp list = data.getWarps();
                 if (list == null || list.size() <= 0) {
-                    player.addChatMessage(new ChatComponentText("No Warps Exist").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                    entityPlayer.addChatMessage(new ChatComponentText("No Warps Exist").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 } else {
                     for (String str : list.keySet()) {
-                        player.addChatMessage(new ChatComponentText(str).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD)));
+                        entityPlayer.addChatMessage(new ChatComponentText(str).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GOLD)));
                     }
                 }
                 return;
             }
             if (pos == null) {
-                player.addChatMessage(new ChatComponentText("Warp " + args[0].toLowerCase() + " not found.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                entityPlayer.addChatMessage(new ChatComponentText("Warp " + args[0].toLowerCase() + " not found.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
-            p.setLastPos(p.getCurrentPos());
-            InfernoTeleporter.teleport(player, pos);
-            player.addChatMessage(new ChatComponentText("Teleported to " + args[0].toLowerCase()));
+            playerData.setLastPos(playerData.getCurrentPos());
+            InfernoTeleporter.teleport(entityPlayer, pos);
+            entityPlayer.addChatMessage(new ChatComponentText("Teleported to " + args[0].toLowerCase()));
         }
     }
 

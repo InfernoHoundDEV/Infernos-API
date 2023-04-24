@@ -18,13 +18,13 @@ public class Warp {
     public void readFromNBT(NBTTagCompound tag, String str) {
         warps.clear();
 
-        NBTTagCompound tag1 = (NBTTagCompound) tag.getTag(str);
+        NBTTagCompound properties = (NBTTagCompound) tag.getTag(str);
 
-        if(tag1 != null && !tag1.hasNoTags())
+        if(properties != null && !properties.hasNoTags())
         {
-            for(String str1 : getMapKeys(tag1))
+            for(String str1 : getMapKeys(properties))
             {
-                warps.put(str1, new BlockDimPos(tag1.getIntArray(str1)));
+                warps.put(str1, new BlockDimPos(properties.getIntArray(str1)));
             }
         }
     }
@@ -46,10 +46,10 @@ public class Warp {
 
     public void writeToNBT(NBTTagCompound tag, String s)
     {
-        NBTTagCompound tag1 = new NBTTagCompound();
+        NBTTagCompound properties = new NBTTagCompound();
         for(Map.Entry<String, BlockDimPos> e : warps.entrySet())
-            tag1.setIntArray(e.getKey(), e.getValue().toIntArray());
-        tag.setTag(s, tag1);
+            properties.setIntArray(e.getKey(), e.getValue().toIntArray());
+        tag.setTag(s, properties);
     }
 
     public Set<String> keySet()

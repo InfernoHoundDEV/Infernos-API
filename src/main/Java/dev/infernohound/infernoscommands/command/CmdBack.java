@@ -6,6 +6,7 @@ import dev.infernohound.infernoscommands.util.InfernoTeleporter;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 
 public class CmdBack extends CommandBase {
@@ -21,19 +22,19 @@ public class CmdBack extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayerMP player = (EntityPlayerMP) getPlayer(ics, ics.getCommandSenderName());
+        EntityPlayerMP entityPlayer = (EntityPlayerMP) getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
 
-        if(WorldData.getPlayerList().containsKey(player.getDisplayName())) {
-            PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
-
-            if (p.getLastPos() == null) {
-                ics.addChatMessage(new ChatComponentText("You can only back once!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-                return;
-            }
-
-            InfernoTeleporter.teleport(player, p.getLastPos());
-            p.setLastPos(null);
+        if (playerData.getLastPos() == null) {
+            ics.addChatMessage(new ChatComponentText("You can only back once!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            return;
         }
+
+        InfernoTeleporter.teleport(entityPlayer, playerData.getLastPos());
+        playerData.setLastPos(null);
+        NBTTagCompound tag = new NBTTagCompound();
+        playerData.saveNBTData(tag);
+        WorldData.setProxyPlayerData(entityPlayer.getUniqueID(), tag);
     }
 
     @Override

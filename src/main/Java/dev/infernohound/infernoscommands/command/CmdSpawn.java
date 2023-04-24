@@ -6,7 +6,9 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.util.InfernoTeleporter;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
 public class CmdSpawn extends CommandBase {
@@ -22,16 +24,19 @@ public class CmdSpawn extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayerMP player = (EntityPlayerMP) getPlayer(ics, ics.getCommandSenderName());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
 
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
 
-        ChunkCoordinates spawn = player.worldObj.getSpawnPoint();
+        ChunkCoordinates spawn = entityPlayer.worldObj.getSpawnPoint();
         BlockDimPos pos = new BlockDimPos(spawn.posX, spawn.posY, spawn.posZ, 0);
 
 
-        p.setLastPos(p.getCurrentPos());
-        InfernoTeleporter.teleport(player, pos);
+        playerData.setLastPos(playerData.getCurrentPos());
+        InfernoTeleporter.teleport(entityPlayer, pos);
+        NBTTagCompound tag = new NBTTagCompound();
+        playerData.saveNBTData(tag);
+        WorldData.setProxyPlayerData(entityPlayer.getUniqueID(), tag);
     }
 
     @Override

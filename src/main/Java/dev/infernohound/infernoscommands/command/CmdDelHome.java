@@ -5,6 +5,7 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.List;
@@ -22,14 +23,17 @@ public class CmdDelHome extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);
         if (args.length == 0) {
             args = new String[]{"home"};
         }
         if (args.length <= 1) {
-            p.getHomes().set(args[0].toLowerCase(), null);
-            player.addChatMessage(new ChatComponentText("Deleted home " + args[0]));
+            playerData.getHomes().set(args[0].toLowerCase(), null);
+            entityPlayer.addChatMessage(new ChatComponentText("Deleted home " + args[0]));
+            NBTTagCompound tag = new NBTTagCompound();
+            playerData.saveNBTData(tag);
+            WorldData.setProxyPlayerData(entityPlayer.getUniqueID(), tag);
         }
     }
 
@@ -45,8 +49,8 @@ public class CmdDelHome extends CommandBase {
 
     @Override
     public List addTabCompletionOptions(ICommandSender ics, String[] args) {
-        EntityPlayer player = getPlayer(ics, ics.getCommandSenderName());
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
-        return getListOfStringsMatchingLastWord(args,p.getHomes().keyArray());
+        EntityPlayer entityPlayer = getPlayer(ics, ics.getCommandSenderName());
+        PlayerData playerData = PlayerData.get(entityPlayer);;
+        return getListOfStringsMatchingLastWord(args,playerData.getHomes().keyArray());
     }
 }

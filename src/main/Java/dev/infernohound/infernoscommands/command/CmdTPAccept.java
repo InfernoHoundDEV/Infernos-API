@@ -5,6 +5,7 @@ import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.util.InfernoTeleporter;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -33,28 +34,28 @@ public class CmdTPAccept extends CommandBase {
             return;
         }
 
-        EntityPlayerMP player = getCommandSenderAsPlayer(ics);
-        EntityPlayerMP other = getPlayer(ics,args[0]);
-        PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
-        PlayerData o = WorldData.getPlayerList().get(other.getDisplayName());
+        EntityPlayer entityPlayer = getCommandSenderAsPlayer(ics);
+        EntityPlayer entityOther = getPlayer(ics,args[0]);
+        PlayerData playerData = PlayerData.get(entityPlayer);
+        PlayerData otherData = PlayerData.get(entityOther);
 
-        if(p != null && p.getTpaRequests().contains(other.getDisplayName())) {
-            p.getTpaRequests().remove(other.getDisplayName());
+        if(playerData != null) {
+            playerData.removeTpaRequest(entityOther.getUniqueID());
 
-            o.setLastPos(o.getCurrentPos());
-            InfernoTeleporter.teleport(other, p.getCurrentPos());
+            otherData.setLastPos(otherData.getCurrentPos());
+            InfernoTeleporter.teleport(entityOther, playerData.getCurrentPos());
             return;
         }
 
-        if(o != null && o.getTpaRequests().contains(player.getDisplayName())) {
-            o.getTpaRequests().remove(player.getDisplayName());
+        if(otherData != null) {
+            otherData.removeTpaRequest(entityPlayer.getUniqueID());
 
-            p.setLastPos(o.getCurrentPos());
-            InfernoTeleporter.teleport(player, o.getCurrentPos());
+            playerData.setLastPos(playerData.getCurrentPos());
+            InfernoTeleporter.teleport(entityPlayer, otherData.getCurrentPos());
             return;
         }
 
-        ics.addChatMessage(new ChatComponentText("Found no request from " + other.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+        ics.addChatMessage(new ChatComponentText("Found no request from " + entityOther.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 
     @Override
