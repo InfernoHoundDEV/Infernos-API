@@ -16,11 +16,6 @@ import java.util.List;
 public class CmdTPAccept extends CommandBase {
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
-    @Override
     public String getCommandName() {
         return "tpaccept";
     }
@@ -60,6 +55,16 @@ public class CmdTPAccept extends CommandBase {
         }
 
         ics.addChatMessage(new ChatComponentText("Found no request from " + other.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+    }
+
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
+    @Override
+    public boolean canCommandSenderUseCommand(ICommandSender ics) {
+        return true;
     }
 
     @Override
