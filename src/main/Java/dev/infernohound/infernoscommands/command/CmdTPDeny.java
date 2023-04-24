@@ -37,7 +37,7 @@ public class CmdTPDeny extends CommandBase {
         PlayerData p = WorldData.getPlayerList().get(player.getDisplayName());
         PlayerData o = WorldData.getPlayerList().get(other.getDisplayName());
 
-        if(!p.getTpaRequests().contains(other.getDisplayName())) {
+        if(!p.getTpaRequests().contains(other.getDisplayName()) && !o.getTpaRequests().contains(player.getDisplayName())) {
             ics.addChatMessage(new ChatComponentText("Found no request from " + other.getDisplayName()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             return;
         }
