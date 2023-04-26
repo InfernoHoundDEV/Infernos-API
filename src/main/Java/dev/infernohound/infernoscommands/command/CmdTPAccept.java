@@ -1,5 +1,6 @@
 package dev.infernohound.infernoscommands.command;
 
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.util.InfernoTeleporter;
@@ -39,18 +40,18 @@ public class CmdTPAccept extends CommandBase {
         PlayerData playerData = PlayerData.get(entityPlayer);
         PlayerData otherData = PlayerData.get(entityOther);
 
-        if(playerData != null) {
+        if(playerData != null && playerData.containsTpaRequest(entityOther.getUniqueID())) {
             playerData.removeTpaRequest(entityOther.getUniqueID());
 
-            otherData.setLastPos(otherData.getCurrentPos());
+            otherData.setLastPosToCurrentPos();
             InfernoTeleporter.teleport(entityOther, playerData.getCurrentPos());
             return;
         }
 
-        if(otherData != null) {
+        if(otherData != null && otherData.containsTpaRequest(entityPlayer.getUniqueID())) {
             otherData.removeTpaRequest(entityPlayer.getUniqueID());
 
-            playerData.setLastPos(playerData.getCurrentPos());
+            playerData.setLastPosToCurrentPos();
             InfernoTeleporter.teleport(entityPlayer, otherData.getCurrentPos());
             return;
         }
@@ -65,7 +66,7 @@ public class CmdTPAccept extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.tpa;
     }
 
     @Override

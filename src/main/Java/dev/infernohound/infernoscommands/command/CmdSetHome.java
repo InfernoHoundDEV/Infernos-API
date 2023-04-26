@@ -1,6 +1,7 @@
 package dev.infernohound.infernoscommands.command;
 
 import dev.infernohound.infernoscommands.InfernosCommands;
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.BlockDimPos;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
@@ -37,7 +38,7 @@ public class CmdSetHome extends CommandBase {
                 entityPlayer.addChatMessage(new ChatComponentText("Can not have a home named list").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
-            int maxHomes = InfernosCommands.maxHomes;
+            int maxHomes = InfernosConfig.maxHomes;
             if(maxHomes <= 0 || (playerData.getHomes().size() >= maxHomes && !playerData.getHomes().keySet().contains(args[0].toLowerCase()))) {
                 entityPlayer.addChatMessage(new ChatComponentText("Already have the maximum number of homes!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
@@ -58,6 +59,6 @@ public class CmdSetHome extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.home;
     }
 }

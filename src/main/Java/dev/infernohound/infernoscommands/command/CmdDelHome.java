@@ -1,5 +1,6 @@
 package dev.infernohound.infernoscommands.command;
 
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
 import net.minecraft.command.CommandBase;
@@ -44,7 +45,7 @@ public class CmdDelHome extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.home;
     }
 
     @Override

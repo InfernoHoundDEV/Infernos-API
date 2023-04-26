@@ -1,5 +1,6 @@
 package dev.infernohound.infernoscommands.command;
 
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.BlockDimPos;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.Warp;
@@ -52,7 +53,7 @@ public class CmdWarp extends CommandBase {
                 entityPlayer.addChatMessage(new ChatComponentText("Warp " + args[0].toLowerCase() + " not found.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                 return;
             }
-            playerData.setLastPos(playerData.getCurrentPos());
+            playerData.setLastPosToCurrentPos();
             InfernoTeleporter.teleport(entityPlayer, pos);
             entityPlayer.addChatMessage(new ChatComponentText("Teleported to " + args[0].toLowerCase()));
         }
@@ -65,7 +66,7 @@ public class CmdWarp extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.warp;
     }
 
     @Override

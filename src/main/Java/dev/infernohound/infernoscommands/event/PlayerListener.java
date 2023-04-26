@@ -2,21 +2,26 @@ package dev.infernohound.infernoscommands.event;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import dev.infernohound.infernoscommands.InfernosCommands;
-import dev.infernohound.infernoscommands.data.BlockDimPos;
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.event.ClickEvent;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PlayerListener extends Event {
 
@@ -53,5 +58,20 @@ public class PlayerListener extends Event {
             playerData.saveNBTData(playerDataNBT);
             WorldData.setProxyPlayerData(entityPlayer.getUniqueID(),playerDataNBT);
         }
+    }
+
+    @SubscribeEvent
+    public void ChatReceived(ClientChatReceivedEvent event) {
+        if (!InfernosConfig.timestamp) {return;}
+        IChatComponent message = event.message.createCopy();
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        ChatComponentText time = new ChatComponentText(now.format(formatter));
+        time.setChatStyle(new ChatStyle().setColor(InfernosConfig.timestampColor));
+        ChatComponentText leftSide = new ChatComponentText("[");
+        ChatComponentText rightSide = new ChatComponentText("]: ");
+        IChatComponent timestamp = leftSide.appendSibling(time).appendSibling(rightSide);
+        IChatComponent messageWithTimestamp = timestamp.appendSibling(message);
+        event.message = messageWithTimestamp;
     }
 }

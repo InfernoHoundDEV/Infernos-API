@@ -52,6 +52,10 @@ public class PlayerData implements IExtendedEntityProperties {
         this.lastPos = lastPos;
     }
 
+    public void setLastPosToCurrentPos() {
+       this.lastPos = getCurrentPos();
+    }
+
     public EntityPlayer getPlayer() {
         return player;
     }

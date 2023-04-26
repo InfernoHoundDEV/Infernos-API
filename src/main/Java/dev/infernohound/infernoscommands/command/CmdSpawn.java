@@ -1,5 +1,6 @@
 package dev.infernohound.infernoscommands.command;
 
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.BlockDimPos;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
@@ -32,7 +33,7 @@ public class CmdSpawn extends CommandBase {
         BlockDimPos pos = new BlockDimPos(spawn.posX, spawn.posY, spawn.posZ, 0);
 
 
-        playerData.setLastPos(playerData.getCurrentPos());
+        playerData.setLastPosToCurrentPos();
         InfernoTeleporter.teleport(entityPlayer, pos);
         NBTTagCompound tag = new NBTTagCompound();
         playerData.saveNBTData(tag);
@@ -46,6 +47,6 @@ public class CmdSpawn extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.spawn;
     }
 }

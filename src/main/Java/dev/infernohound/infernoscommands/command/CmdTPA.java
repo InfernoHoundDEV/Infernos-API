@@ -1,5 +1,6 @@
 package dev.infernohound.infernoscommands.command;
 
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
 import dev.infernohound.infernoscommands.event.PlayerListener;
@@ -82,7 +83,7 @@ public class CmdTPA extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return true;
+        return InfernosConfig.tpa;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dev.infernohound.infernoscommands.command;
 
 import dev.infernohound.infernoscommands.InfernosCommands;
+import dev.infernohound.infernoscommands.config.InfernosConfig;
 import dev.infernohound.infernoscommands.data.BlockDimPos;
 import dev.infernohound.infernoscommands.data.PlayerData;
 import dev.infernohound.infernoscommands.data.WorldData;
@@ -49,7 +50,7 @@ public class CmdRandomTP extends CommandBase {
             PlayerData otherData = PlayerData.get(entityOther);
             BlockDimPos pos = getTopBlock(entityPlayer.worldObj, randomPos(entityOther.dimension));
 
-            otherData.setLastPos(otherData.getCurrentPos());
+            otherData.setLastPosToCurrentPos();
 
             InfernoTeleporter.teleport(entityOther, pos);
             NBTTagCompound tag = new NBTTagCompound();
@@ -65,7 +66,7 @@ public class CmdRandomTP extends CommandBase {
 
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender ics) {
-        return ics.canCommandSenderUseCommand(3, "rtp");
+        return ics.canCommandSenderUseCommand(3, "rtp") ? InfernosConfig.rtp : false;
     }
 
     @Override
@@ -75,9 +76,9 @@ public class CmdRandomTP extends CommandBase {
 
     private BlockDimPos randomPos(int dim) {
         Random random = new Random();
-        int x = random.nextInt(Math.min(Math.max(InfernosCommands.rPosX, 100), 100000));
+        int x = random.nextInt(Math.min(Math.max(InfernosConfig.randomX, 100), 100000));
         int y = 258;
-        int z = random.nextInt(Math.min(Math.max(InfernosCommands.rPosZ, 100), 100000));
+        int z = random.nextInt(Math.min(Math.max(InfernosConfig.randomZ, 100), 100000));
         return new BlockDimPos( x, y, z, dim );
     }
 
