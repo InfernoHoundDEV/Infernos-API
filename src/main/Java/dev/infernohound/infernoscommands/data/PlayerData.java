@@ -77,7 +77,7 @@ public class PlayerData implements IExtendedEntityProperties {
     }
 
     public BlockDimPos getCurrentPos() {
-       return new BlockDimPos(player.posX, player.posY, player.posZ, player.worldObj.provider.dimensionId);
+       return new BlockDimPos((int) player.posX, (int) player.posY, (int) player.posZ, player.worldObj.provider.dimensionId);
     }
 
     @Override

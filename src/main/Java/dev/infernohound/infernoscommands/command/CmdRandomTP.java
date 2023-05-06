@@ -49,8 +49,8 @@ public class CmdRandomTP extends CommandBase {
 
             PlayerData otherData = PlayerData.get(entityOther);
             BlockDimPos randPos = randomPos(entityOther.dimension);
-            randPos.addX(entityOther.posX);
-            randPos.addZ(entityOther.posZ);
+            randPos.addX((int) entityOther.posX);
+            randPos.addZ((int) entityOther.posZ);
             BlockDimPos pos = getTopBlock(entityPlayer.worldObj, randomPos(entityOther.dimension));
 
             otherData.setLastPosToCurrentPos();

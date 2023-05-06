@@ -2,9 +2,9 @@ package dev.infernohound.infernoscommands.data;
 
 public class BlockDimPos {
     private int dim;
-    private double x;
-    private double y;
-    private double z;
+    private int x;
+    private int y;
+    private int z;
 
 
     @Override
@@ -17,7 +17,7 @@ public class BlockDimPos {
                 '}';
     }
 
-    public BlockDimPos(double x, double y, double z, int dim) {
+    public BlockDimPos(int x, int y, int z, int dim) {
         this.dim = dim;
         this.x = x;
         this.y = y;
@@ -49,35 +49,35 @@ public class BlockDimPos {
         this.dim = dim;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public void setX(double x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public void setY(double y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public double getZ() {
+    public int getZ() {
         return z;
     }
 
-    public void setZ(double z) {
+    public void setZ(int z) {
         this.z = z;
     }
 
-    public void addX(double x) {this.x = this.x + x;}
+    public void addX(int x) {this.x = this.x + x;}
 
-    public void addY(double y) {this.y = this.y + y;}
+    public void addY(int y) {this.y = this.y + y;}
 
-    public void addZ(double z) {this.z = this.z + z;}
+    public void addZ(int z) {this.z = this.z + z;}
 
     public int[] toIntArray() {
         return new int[]{(int) x, (int) y, (int) z, dim};
