@@ -48,6 +48,9 @@ public class CmdRandomTP extends CommandBase {
             }
 
             PlayerData otherData = PlayerData.get(entityOther);
+            BlockDimPos randPos = randomPos(entityOther.dimension);
+            randPos.addX(entityOther.posX);
+            randPos.addZ(entityOther.posZ);
             BlockDimPos pos = getTopBlock(entityPlayer.worldObj, randomPos(entityOther.dimension));
 
             otherData.setLastPosToCurrentPos();
@@ -76,9 +79,19 @@ public class CmdRandomTP extends CommandBase {
 
     private BlockDimPos randomPos(int dim) {
         Random random = new Random();
-        int x = random.nextInt(Math.min(Math.max(InfernosConfig.randomX, 100), 100000));
+        int radius = InfernosConfig.randomRadius;
+        int x = random.nextInt();
         int y = 258;
-        int z = random.nextInt(Math.min(Math.max(InfernosConfig.randomZ, 100), 100000));
+        int z = random.nextInt();
+
+        if (Math.abs(x) > radius) {
+            x = x >= 0 ? radius : -radius;
+        }
+
+        if(Math.abs(z) > radius) {
+            z = z >= 0 ? radius : -radius;
+        }
+
         return new BlockDimPos( x, y, z, dim );
     }
 

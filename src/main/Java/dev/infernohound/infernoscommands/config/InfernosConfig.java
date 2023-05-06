@@ -26,8 +26,7 @@ public class InfernosConfig {
     public static EnumChatFormatting timestampColor;
 
     // Random Teleport
-    public static int randomX;
-    public static int randomZ;
+    public static int randomRadius;
 
     public static void init(File file) {
         config = new Configuration(file);
@@ -61,8 +60,7 @@ public class InfernosConfig {
 
         // Random Teleport
         config.addCustomCategoryComment("RandomTP", "Random Teleport Settings");
-        randomX = config.getInt("x", "RandomTP", 50000, 0, 100000, "Max distance random teleport can go in the x direction");
-        randomZ = config.getInt("z", "RandomTP", 50000, 0, 100000, "Max distance random teleport can go in the z direction");
+        randomRadius = config.getInt("x", "RandomTP", 2560000, 0, 2147483647, "Max radius of random teleport");
 
         config.save();
     }

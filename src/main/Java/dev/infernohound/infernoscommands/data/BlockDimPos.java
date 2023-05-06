@@ -73,6 +73,12 @@ public class BlockDimPos {
         this.z = z;
     }
 
+    public void addX(double x) {this.x = this.x + x;}
+
+    public void addY(double y) {this.y = this.y + y;}
+
+    public void addZ(double z) {this.z = this.z + z;}
+
     public int[] toIntArray() {
         return new int[]{(int) x, (int) y, (int) z, dim};
     }
