@@ -79,18 +79,23 @@ public class CmdRandomTP extends CommandBase {
 
     private BlockDimPos randomPos(int dim) {
         Random random = new Random();
-        int radius = InfernosConfig.randomRadius;
+        int maxRadius = InfernosConfig.randomRadius;
         int x = random.nextInt();
         int y = 258;
         int z = random.nextInt();
 
-        if (Math.abs(x) > radius) {
-            x = x >= 0 ? radius : -radius;
+        double theta =  Math.random() * 2 * Math.PI;
+
+        if (Math.abs(x) > maxRadius) {
+            x = x >= 0 ? maxRadius : -maxRadius;
         }
 
-        if(Math.abs(z) > radius) {
-            z = z >= 0 ? radius : -radius;
+        if(Math.abs(z) > maxRadius) {
+            z = z >= 0 ? maxRadius : -maxRadius;
         }
+
+        x = (int) (x * Math.cos(theta));
+        z = (int) (z * Math.sin(theta));
 
         return new BlockDimPos( x, y, z, dim );
     }
